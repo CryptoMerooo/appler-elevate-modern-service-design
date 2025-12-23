@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,7 +42,7 @@ const Header = () => {
           </nav>
 
           {/* CTA & Mobile Menu Toggle */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <a
               href="tel:+74951234567"
               className="hidden md:flex items-center gap-2 text-foreground font-semibold hover:text-primary transition-colors"
@@ -49,6 +50,7 @@ const Header = () => {
               <Phone className="w-4 h-4" />
               <span>+7 (495) 123-45-67</span>
             </a>
+            <ThemeToggle />
             <a
               href="#contacts"
               className="hidden sm:inline-flex btn-primary text-sm"
