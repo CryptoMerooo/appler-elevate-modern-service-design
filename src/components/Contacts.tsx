@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin, Phone, Clock, Mail, Send, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import PhoneInput, { validatePhone, getPhoneError } from "./PhoneInput";
 
 const Contacts = () => {
   const [formData, setFormData] = useState({
@@ -9,14 +10,31 @@ const Contacts = () => {
     device: "",
     problem: "",
   });
+  const [errors, setErrors] = useState<{ phone?: string }>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Валидация телефона
+    const phoneError = getPhoneError(formData.phone);
+    if (phoneError) {
+      setErrors({ phone: phoneError });
+      return;
+    }
+    
+    setErrors({});
     setIsSubmitted(true);
     toast.success("Заявка отправлена! Мы перезвоним в течение 10 минут.");
     setFormData({ name: "", phone: "", device: "", problem: "" });
     setTimeout(() => setIsSubmitted(false), 3000);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData({ ...formData, phone: value });
+    if (errors.phone && validatePhone(value)) {
+      setErrors({});
+    }
   };
 
   const contactInfo = [
@@ -104,14 +122,17 @@ const Contacts = () => {
                   <label className="block text-sm font-medium text-cream/80 mb-2">
                     Телефон
                   </label>
-                  <input
-                    type="tel"
-                    required
+                  <PhoneInput
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 bg-dark border border-cream/10 rounded-xl text-cream placeholder:text-cream/40 focus:outline-none focus:border-primary/50 transition-colors"
-                    placeholder="+7 (___) ___-__-__"
+                    onChange={handlePhoneChange}
+                    required
+                    className={`w-full px-4 py-3 bg-dark border rounded-xl text-cream placeholder:text-cream/40 focus:outline-none transition-colors ${
+                      errors.phone ? "border-destructive focus:border-destructive" : "border-cream/10 focus:border-primary/50"
+                    }`}
                   />
+                  {errors.phone && (
+                    <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+                  )}
                 </div>
 
                 <div>

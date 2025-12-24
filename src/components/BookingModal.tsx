@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, Send, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useBookingModal } from "@/contexts/BookingModalContext";
+import PhoneInput, { validatePhone, getPhoneError } from "./PhoneInput";
 
 const BookingModal = () => {
   const { isOpen, closeModal } = useBookingModal();
@@ -11,10 +12,20 @@ const BookingModal = () => {
     device: "",
     problem: "",
   });
+  const [errors, setErrors] = useState<{ phone?: string }>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Валидация телефона
+    const phoneError = getPhoneError(formData.phone);
+    if (phoneError) {
+      setErrors({ phone: phoneError });
+      return;
+    }
+    
+    setErrors({});
     setIsSubmitted(true);
     toast.success("Заявка отправлена! Мы перезвоним в течение 10 минут.");
     setFormData({ name: "", phone: "", device: "", problem: "" });
@@ -27,6 +38,13 @@ const BookingModal = () => {
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
+    }
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData({ ...formData, phone: value });
+    if (errors.phone && validatePhone(value)) {
+      setErrors({});
     }
   };
 
@@ -94,14 +112,17 @@ const BookingModal = () => {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Телефон
                 </label>
-                <input
-                  type="tel"
-                  required
+                <PhoneInput
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
-                  placeholder="+7 (___) ___-__-__"
+                  onChange={handlePhoneChange}
+                  required
+                  className={`w-full px-4 py-3 bg-secondary border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none transition-colors ${
+                    errors.phone ? "border-destructive focus:border-destructive" : "border-border focus:border-primary/50"
+                  }`}
                 />
+                {errors.phone && (
+                  <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+                )}
               </div>
 
               <div>
