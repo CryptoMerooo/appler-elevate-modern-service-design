@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { useBookingModal } from "@/contexts/BookingModalContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { openModal } = useBookingModal();
 
   const navLinks = [
     { href: "#services", label: "Услуги" },
@@ -51,12 +53,12 @@ const Header = () => {
               <span>+7 (495) 123-45-67</span>
             </a>
             <ThemeToggle />
-            <a
-              href="#contacts"
+            <button
+              onClick={openModal}
               className="hidden sm:inline-flex btn-primary text-sm"
             >
               Записаться
-            </a>
+            </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
@@ -81,6 +83,15 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  openModal();
+                }}
+                className="mx-4 mt-2 btn-primary text-base"
+              >
+                Записаться
+              </button>
               <a
                 href="tel:+74951234567"
                 className="flex items-center gap-2 px-4 py-3 text-base font-medium text-primary"

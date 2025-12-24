@@ -1,6 +1,9 @@
 import { Smartphone, Laptop, Tablet, Monitor, ArrowRight } from "lucide-react";
+import { useBookingModal } from "@/contexts/BookingModalContext";
 
 const Services = () => {
+  const { openModal } = useBookingModal();
+
   const services = [
     {
       icon: Smartphone,
@@ -109,13 +112,13 @@ const Services = () => {
               </ul>
 
               {/* CTA */}
-              <a
-                href="#contacts"
+              <button
+                onClick={openModal}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
               >
                 Подробнее
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </button>
             </div>
           ))}
         </div>
@@ -125,10 +128,10 @@ const Services = () => {
           <p className="text-muted-foreground mb-4">
             Не нашли вашу модель? Позвоните нам — ремонтируем всё!
           </p>
-          <a href="#contacts" className="btn-primary inline-flex items-center gap-2">
+          <button onClick={openModal} className="btn-primary inline-flex items-center gap-2">
             Бесплатная консультация
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
         </div>
       </div>
     </section>
