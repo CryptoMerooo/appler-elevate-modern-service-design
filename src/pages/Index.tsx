@@ -8,10 +8,12 @@ import Reviews from "@/components/Reviews";
 import FAQ from "@/components/FAQ";
 import Contacts from "@/components/Contacts";
 import Footer from "@/components/Footer";
+import BookingModal from "@/components/BookingModal";
+import { BookingModalProvider } from "@/contexts/BookingModalContext";
 
 const Index = () => {
   return (
-    <>
+    <BookingModalProvider>
       <Helmet>
         <title>Mr.Appler — Премиальный ремонт техники Apple в Москве</title>
         <meta
@@ -37,8 +39,9 @@ const Index = () => {
           <Contacts />
         </main>
         <Footer />
+        <BookingModal />
       </div>
-    </>
+    </BookingModalProvider>
   );
 };
 

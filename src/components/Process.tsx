@@ -1,6 +1,9 @@
 import { Phone, Search, Wrench, CheckCircle, ArrowRight } from "lucide-react";
+import { useBookingModal } from "@/contexts/BookingModalContext";
 
 const Process = () => {
+  const { openModal } = useBookingModal();
+
   const steps = [
     {
       icon: Phone,
@@ -87,10 +90,10 @@ const Process = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <a href="#contacts" className="btn-primary inline-flex items-center gap-2 text-lg">
+          <button onClick={openModal} className="btn-primary inline-flex items-center gap-2 text-lg">
             Начать с бесплатной диагностики
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </button>
         </div>
       </div>
     </section>
