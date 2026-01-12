@@ -6,6 +6,14 @@ import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import { BookingModalProvider, useBookingModal } from "@/contexts/BookingModalContext";
 import servicesData from "@/data/services.json";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const iconMap: Record<string, React.ElementType> = {
   smartphone: Smartphone,
@@ -125,8 +133,92 @@ const ServicesContent = () => {
               })}
             </div>
 
-            {/* Bottom CTA */}
-            <div className="text-center mt-16">
+          </div>
+        </section>
+
+        {/* Full Price Table Section */}
+        <section className="section-padding bg-secondary/30">
+          <div className="container-custom">
+            <div className="text-center mb-12">
+              <h2 className="heading-display text-3xl sm:text-4xl mb-4">
+                Полный прайс-лист
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Все услуги и цены в одной таблице. Точная стоимость зависит от модели устройства.
+              </p>
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-secondary/50">
+                      <TableHead className="font-display font-bold text-foreground py-4 px-6 w-[200px]">
+                        Устройство
+                      </TableHead>
+                      <TableHead className="font-display font-bold text-foreground py-4 px-6">
+                        Услуга
+                      </TableHead>
+                      <TableHead className="font-display font-bold text-foreground py-4 px-6 text-right w-[150px]">
+                        Цена
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {services.map((service) => {
+                      const IconComponent = iconMap[service.icon] || Smartphone;
+                      return service.repairs.map((repair, repairIndex) => (
+                        <TableRow 
+                          key={`${service.id}-${repairIndex}`}
+                          className="hover:bg-secondary/20 transition-colors"
+                        >
+                          {repairIndex === 0 ? (
+                            <TableCell 
+                              className="py-4 px-6 align-top border-r border-border/50"
+                              rowSpan={service.repairs.length}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <IconComponent className="w-5 h-5 text-primary" />
+                                </div>
+                                <div>
+                                  <Link 
+                                    to={`/services/${service.slug}`}
+                                    className="font-semibold text-foreground hover:text-primary transition-colors"
+                                  >
+                                    {service.title}
+                                  </Link>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    {service.priceFrom}
+                                  </p>
+                                </div>
+                              </div>
+                            </TableCell>
+                          ) : null}
+                          <TableCell className="py-3 px-6 text-foreground">
+                            {repair.name}
+                          </TableCell>
+                          <TableCell className="py-3 px-6 text-right font-semibold text-primary whitespace-nowrap">
+                            {repair.price}
+                          </TableCell>
+                        </TableRow>
+                      ));
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground text-center mt-6">
+              * Указаны минимальные цены. Точная стоимость определяется после бесплатной диагностики.
+            </p>
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <div className="text-center">
               <div className="bg-card rounded-2xl border border-border p-8 lg:p-12 max-w-2xl mx-auto">
                 <h3 className="heading-display text-2xl lg:text-3xl mb-4">
                   Не нашли нужную услугу?
