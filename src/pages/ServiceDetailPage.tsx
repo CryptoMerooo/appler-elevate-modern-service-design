@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { Smartphone, Laptop, Tablet, Monitor, Watch, Headphones, ArrowRight, ArrowLeft, Check, Phone } from "lucide-react";
+import { Smartphone, Laptop, Tablet, Monitor, Watch, Headphones, ArrowRight, ArrowLeft, Check, Phone, AlertCircle } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,6 +27,7 @@ const ServiceDetailContent = () => {
   const { openModal } = useBookingModal();
   
   const service = servicesData.services.find((s) => s.slug === slug);
+  const popularServices = servicesData.popularServices.filter((s) => s.slug !== slug);
 
   if (!service) {
     return <Navigate to="/services" replace />;
@@ -63,19 +64,23 @@ const ServiceDetailContent = () => {
         </div>
 
         {/* Hero Section */}
-        <section className="py-12 lg:py-20 bg-gradient-to-b from-secondary/50 to-background">
-          <div className="container-custom">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Все услуги
-                </Link>
+        <section className="relative py-16 lg:py-24 overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 via-background to-background" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
+          
+          <div className="container-custom relative z-10">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Все услуги
+            </Link>
 
-                <div className="flex items-center gap-4 mb-6">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <IconComponent className="w-8 h-8 text-primary" />
                   </div>
@@ -86,140 +91,191 @@ const ServiceDetailContent = () => {
                   )}
                 </div>
 
-                <h1 className="heading-display text-4xl sm:text-5xl lg:text-6xl mb-4">
+                <h1 className="heading-display text-4xl sm:text-5xl lg:text-6xl">
                   {service.title}
                 </h1>
 
-                <p className="text-xl text-muted-foreground mb-4">
+                <p className="text-xl lg:text-2xl text-muted-foreground">
                   {service.subtitle}
                 </p>
 
-                <p className="text-muted-foreground leading-relaxed mb-8 max-w-xl" style={{ lineHeight: "1.8" }}>
-                  {service.description}
+                <p className="text-lg font-display font-bold text-primary">
+                  Цены {service.priceFrom}
                 </p>
 
-                <div className="flex flex-wrap gap-4">
-                  <button onClick={openModal} className="btn-primary inline-flex items-center gap-2">
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <button onClick={openModal} className="btn-primary inline-flex items-center gap-2 text-base px-6 py-3">
                     Записаться на ремонт
                     <ArrowRight className="w-4 h-4" />
                   </button>
-                  <a href="tel:+74951234567" className="btn-secondary inline-flex items-center gap-2">
+                  <a href="tel:+74951234567" className="btn-secondary inline-flex items-center gap-2 text-base px-6 py-3">
                     <Phone className="w-4 h-4" />
                     Позвонить
                   </a>
                 </div>
               </div>
 
-              {/* Models List */}
-              <div className="bg-card rounded-2xl border border-border p-6 lg:p-8">
-                <h3 className="font-display font-bold text-lg mb-4">Поддерживаемые модели</h3>
-                <div className="flex flex-wrap gap-2">
-                  {service.models.map((model, i) => (
-                    <span
-                      key={i}
-                      className="text-sm text-muted-foreground px-3 py-1.5 bg-secondary rounded-lg"
-                    >
-                      {model}
-                    </span>
-                  ))}
+              {/* Hero Image */}
+              <div className="relative">
+                <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-secondary to-card border border-border overflow-hidden">
+                  <img 
+                    src={service.heroImage} 
+                    alt={service.title}
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Advantages Section */}
-        <section className="section-padding">
+        {/* Description Section */}
+        <section className="py-12 lg:py-16">
+          <div className="container-custom">
+            <div className="max-w-3xl">
+              <p 
+                className="text-lg text-muted-foreground leading-relaxed"
+                style={{ lineHeight: "1.9", maxWidth: "65ch" }}
+              >
+                {service.description}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Problems Section */}
+        <section className="py-12 lg:py-20 bg-secondary/30">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
+                Проблемы
+              </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Почему выбирают нас
+                Проблемы, которые мы решаем
               </h2>
               <p className="text-muted-foreground">
-                Преимущества ремонта {service.title.toLowerCase()} в нашем сервисе
+                С какими неисправностями {service.title.toLowerCase().replace("ремонт ", "")} вы можете обратиться к нам
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {service.advantages.map((advantage, index) => (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+              {service.problems.map((problem, index) => (
                 <div
                   key={index}
-                  className="bg-card rounded-2xl border border-border p-6 transition-all duration-300 hover:shadow-md"
+                  className="flex items-start gap-3 p-4 bg-card rounded-xl border border-border"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                    <Check className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-display font-bold text-lg mb-2">
-                    {advantage.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {advantage.description}
-                  </p>
+                  <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground" style={{ lineHeight: "1.6" }}>
+                    {problem}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section className="section-padding bg-secondary/30">
+        {/* Steps Section */}
+        <section className="py-12 lg:py-20">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
-                Прайс-лист
+                Как мы работаем
               </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Стоимость ремонта
+                Этапы ремонта
               </h2>
               <p className="text-muted-foreground">
-                Актуальные цены на {service.title.toLowerCase()}. Точная стоимость определяется после диагностики.
+                Простой и прозрачный процесс от обращения до получения устройства
               </p>
             </div>
 
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-card rounded-2xl border border-border overflow-hidden">
-                <div className="divide-y divide-border">
-                  {service.repairs.map((repair, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-5 hover:bg-secondary/50 transition-colors"
-                    >
-                      <span className="text-foreground font-medium" style={{ lineHeight: "1.6" }}>
-                        {repair.name}
-                      </span>
-                      <span className="font-display font-bold text-primary text-lg whitespace-nowrap ml-4">
-                        {repair.price}
-                      </span>
-                    </div>
-                  ))}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+              {service.steps.map((step, index) => (
+                <div
+                  key={index}
+                  className="relative bg-card rounded-2xl border border-border p-6 transition-all duration-300 hover:shadow-md"
+                >
+                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-xl mb-4">
+                    {index + 1}
+                  </div>
+                  <h3 className="font-display font-bold text-lg mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed" style={{ lineHeight: "1.7" }}>
+                    {step.description}
+                  </p>
+                  
+                  {/* Connector line */}
+                  {index < service.steps.length - 1 && (
+                    <div className="hidden lg:block absolute top-10 left-full w-6 h-0.5 bg-border -translate-y-1/2 z-10" />
+                  )}
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              <div className="text-center mt-8">
-                <p className="text-sm text-muted-foreground mb-4">
-                  * Цены указаны ориентировочно. Точная стоимость зависит от модели устройства и сложности ремонта.
-                </p>
-                <button onClick={openModal} className="btn-primary inline-flex items-center gap-2">
-                  Узнать точную стоимость
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+        {/* Popular Services Section */}
+        <section className="py-12 lg:py-20 bg-secondary/30">
+          <div className="container-custom">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
+                Другие услуги
+              </span>
+              <h2 className="heading-display text-3xl sm:text-4xl mb-4">
+                Популярные услуги
+              </h2>
+              <p className="text-muted-foreground">
+                Посмотрите другие услуги нашего сервисного центра
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {popularServices.map((item, index) => {
+                const fullService = servicesData.services.find(s => s.slug === item.slug);
+                const ItemIcon = fullService ? iconMap[fullService.icon] || Smartphone : Smartphone;
+                
+                return (
+                  <Link
+                    key={index}
+                    to={`/services/${item.slug}`}
+                    className="group bg-card rounded-2xl border border-border p-6 transition-all duration-300 hover:shadow-md hover:border-primary/30"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <ItemIcon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-primary font-semibold">{item.priceFrom}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                      <span>Подробнее</span>
+                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="section-padding">
+        <section className="py-12 lg:py-20">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
                 FAQ
               </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Частые вопросы
+                Вопросы и ответы
               </h2>
               <p className="text-muted-foreground">
-                Ответы на популярные вопросы о ремонте {service.title.toLowerCase()}
+                Ответы на частые вопросы о {service.title.toLowerCase()}
               </p>
             </div>
 
@@ -234,7 +290,10 @@ const ServiceDetailContent = () => {
                     <AccordionTrigger className="text-left font-display font-semibold py-5 hover:no-underline">
                       {item.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-5 leading-relaxed" style={{ lineHeight: "1.8" }}>
+                    <AccordionContent 
+                      className="text-muted-foreground pb-5" 
+                      style={{ lineHeight: "1.8", maxWidth: "60ch" }}
+                    >
                       {item.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -244,25 +303,30 @@ const ServiceDetailContent = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="section-padding bg-gradient-to-br from-primary/5 via-background to-secondary/30">
+        {/* Final CTA Section */}
+        <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/30">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="heading-display text-3xl sm:text-4xl mb-4">
+              <h2 className="heading-display text-3xl sm:text-4xl lg:text-5xl mb-6">
                 Готовы отремонтировать ваш{" "}
                 <span className="text-primary">{service.title.replace("Ремонт ", "")}</span>?
               </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Оставьте заявку и мы свяжемся с вами в течение 15 минут для уточнения деталей
+              <p className="text-lg text-muted-foreground mb-8" style={{ lineHeight: "1.8" }}>
+                Оставьте заявку и мы свяжемся с вами в течение 15 минут для уточнения деталей. 
+                Бесплатная диагностика, гарантия до 1 года.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button onClick={openModal} className="btn-primary inline-flex items-center gap-2 text-lg px-8 py-4">
                   Записаться на ремонт
                   <ArrowRight className="w-5 h-5" />
                 </button>
+                <a href="tel:+74951234567" className="btn-secondary inline-flex items-center gap-2 text-lg px-8 py-4">
+                  <Phone className="w-5 h-5" />
+                  +7 (495) 123-45-67
+                </a>
               </div>
-              <p className="text-sm text-muted-foreground mt-4">
-                Бесплатная диагностика • Гарантия до 1 года • Цены {service.priceFrom}
+              <p className="text-sm text-muted-foreground mt-6">
+                Цены {service.priceFrom} • Ремонт от 30 минут • Гарантия до 1 года
               </p>
             </div>
           </div>
