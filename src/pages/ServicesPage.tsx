@@ -3,6 +3,7 @@ import { Smartphone, Laptop, Tablet, Monitor, Watch, Headphones, ArrowRight } fr
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import BookingModal from "@/components/BookingModal";
 import { BookingModalProvider, useBookingModal } from "@/contexts/BookingModalContext";
 import servicesData from "@/data/services.json";
@@ -28,6 +29,10 @@ const ServicesContent = () => {
   const { openModal } = useBookingModal();
   const { services } = servicesData;
 
+  const breadcrumbItems = [
+    { label: "Услуги" }
+  ];
+
   return (
     <>
       <Helmet>
@@ -41,6 +46,11 @@ const ServicesContent = () => {
       <Header />
 
       <main className="pt-24">
+        {/* Breadcrumbs */}
+        <div className="container-custom">
+          <Breadcrumbs items={breadcrumbItems} />
+        </div>
+
         {/* Hero Section */}
         <section className="section-padding bg-gradient-to-b from-secondary/50 to-background">
           <div className="container-custom">

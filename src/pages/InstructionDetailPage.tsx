@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { Smartphone, Laptop, Tablet, Monitor, Watch, Headphones, ArrowRight, ArrowLeft, Check, Phone, AlertCircle } from "lucide-react";
+import { Smartphone, Laptop, Tablet, Monitor, Watch, Headphones, ArrowRight, ArrowLeft, Phone, BookOpen } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import servicesData from "@/data/services.json";
+import instructionsData from "@/data/instructions.json";
 
 const iconMap: Record<string, React.ElementType> = {
   smartphone: Smartphone,
@@ -23,26 +23,31 @@ const iconMap: Record<string, React.ElementType> = {
   headphones: Headphones,
 };
 
-const ServiceDetailContent = () => {
+const InstructionDetailContent = () => {
   const { slug } = useParams<{ slug: string }>();
   const { openModal } = useBookingModal();
   
-  const service = servicesData.services.find((s) => s.slug === slug);
-  const popularServices = servicesData.popularServices.filter((s) => s.slug !== slug);
+  const instruction = instructionsData.instructions.find((i) => i.slug === slug);
+  const otherInstructions = instructionsData.instructions.filter((i) => i.slug !== slug).slice(0, 3);
 
-  if (!service) {
-    return <Navigate to="/services" replace />;
+  if (!instruction) {
+    return <Navigate to="/instructions" replace />;
   }
 
-  const IconComponent = iconMap[service.icon] || Smartphone;
+  const IconComponent = iconMap[instruction.icon] || BookOpen;
+
+  const breadcrumbItems = [
+    { label: "Инструкции", href: "/instructions" },
+    { label: instruction.title }
+  ];
 
   return (
     <>
       <Helmet>
-        <title>{service.title} | Mr.Appler — Сервисный центр Apple</title>
+        <title>{instruction.title} | Mr.Appler — Инструкции</title>
         <meta
           name="description"
-          content={`${service.shortDescription}. Цены ${service.priceFrom}. Гарантия, оригинальные запчасти, быстрый ремонт.`}
+          content={instruction.shortDescription}
         />
       </Helmet>
 
@@ -51,25 +56,22 @@ const ServiceDetailContent = () => {
       <main className="pt-24">
         {/* Breadcrumbs */}
         <div className="container-custom">
-          <Breadcrumbs items={[
-            { label: "Услуги", href: "/services" },
-            { label: service.title }
-          ]} />
+          <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         {/* Hero Section */}
-        <section className="relative py-16 lg:py-24 overflow-hidden">
+        <section className="relative py-12 lg:py-20 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 via-background to-background" />
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
           
           <div className="container-custom relative z-10">
             <Link
-              to="/services"
+              to="/instructions"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
             >
               <ArrowLeft className="w-4 h-4" />
-              Все услуги
+              Все инструкции
             </Link>
 
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -78,34 +80,29 @@ const ServiceDetailContent = () => {
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <IconComponent className="w-8 h-8 text-primary" />
                   </div>
-                  {service.popular && (
-                    <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
-                      Популярное
-                    </span>
-                  )}
+                  <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <BookOpen className="w-4 h-4" />
+                    {instruction.steps.length} шага
+                  </span>
                 </div>
 
-                <h1 className="heading-display text-4xl sm:text-5xl lg:text-6xl">
-                  {service.title}
+                <h1 className="heading-display text-3xl sm:text-4xl lg:text-5xl">
+                  {instruction.title}
                 </h1>
 
-                <p className="text-xl lg:text-2xl text-muted-foreground">
-                  {service.subtitle}
-                </p>
-
-                <p className="text-lg font-display font-bold text-primary">
-                  Цены {service.priceFrom}
+                <p className="text-xl text-muted-foreground">
+                  {instruction.subtitle}
                 </p>
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                  <button onClick={openModal} className="btn-primary inline-flex items-center gap-2 text-base px-6 py-3">
-                    Записаться на ремонт
+                  <a href="#steps" className="btn-primary inline-flex items-center gap-2 text-base px-6 py-3">
+                    Читать инструкцию
                     <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <a href="tel:+74951234567" className="btn-secondary inline-flex items-center gap-2 text-base px-6 py-3">
-                    <Phone className="w-4 h-4" />
-                    Позвонить
                   </a>
+                  <button onClick={openModal} className="btn-secondary inline-flex items-center gap-2 text-base px-6 py-3">
+                    <Phone className="w-4 h-4" />
+                    Нужна помощь?
+                  </button>
                 </div>
               </div>
 
@@ -113,8 +110,8 @@ const ServiceDetailContent = () => {
               <div className="relative">
                 <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-secondary to-card border border-border overflow-hidden">
                   <img 
-                    src={service.heroImage} 
-                    alt={service.title}
+                    src={instruction.heroImage} 
+                    alt={instruction.title}
                     className="w-full h-full object-cover opacity-80"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
@@ -129,126 +126,98 @@ const ServiceDetailContent = () => {
           <div className="container-custom">
             <div className="max-w-3xl">
               <p 
-                className="text-lg text-muted-foreground leading-relaxed"
+                className="text-lg text-muted-foreground"
                 style={{ lineHeight: "1.9", maxWidth: "65ch" }}
               >
-                {service.description}
+                {instruction.description}
               </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Problems Section */}
-        <section className="py-12 lg:py-20 bg-secondary/30">
-          <div className="container-custom">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
-                Проблемы
-              </span>
-              <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Проблемы, которые мы решаем
-              </h2>
-              <p className="text-muted-foreground">
-                С какими неисправностями {service.title.toLowerCase().replace("ремонт ", "")} вы можете обратиться к нам
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-              {service.problems.map((problem, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 p-4 bg-card rounded-xl border border-border"
-                >
-                  <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-foreground" style={{ lineHeight: "1.6" }}>
-                    {problem}
-                  </span>
-                </div>
-              ))}
             </div>
           </div>
         </section>
 
         {/* Steps Section */}
-        <section className="py-12 lg:py-20">
+        <section id="steps" className="py-12 lg:py-20 bg-secondary/30">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
-                Как мы работаем
+                Пошаговая инструкция
               </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Этапы ремонта
+                Как это сделать
               </h2>
               <p className="text-muted-foreground">
-                Простой и прозрачный процесс от обращения до получения устройства
+                Следуйте этим шагам для достижения результата
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {service.steps.map((step, index) => (
+            <div className="max-w-3xl mx-auto space-y-6">
+              {instruction.steps.map((step, index) => (
                 <div
                   key={index}
-                  className="relative bg-card rounded-2xl border border-border p-6 transition-all duration-300 hover:shadow-md"
+                  className="bg-card rounded-2xl border border-border p-6 lg:p-8"
                 >
-                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-xl mb-4">
-                    {index + 1}
+                  <div className="flex gap-5">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-xl">
+                        {index + 1}
+                      </div>
+                    </div>
+                    <div className="flex-1 pt-1">
+                      <h3 className="font-display font-bold text-xl mb-3">
+                        {step.title}
+                      </h3>
+                      <p 
+                        className="text-muted-foreground"
+                        style={{ lineHeight: "1.8", maxWidth: "55ch" }}
+                      >
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-display font-bold text-lg mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed" style={{ lineHeight: "1.7" }}>
-                    {step.description}
-                  </p>
-                  
-                  {/* Connector line */}
-                  {index < service.steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-10 left-full w-6 h-0.5 bg-border -translate-y-1/2 z-10" />
-                  )}
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Popular Services Section */}
-        <section className="py-12 lg:py-20 bg-secondary/30">
+        {/* Other Instructions Section */}
+        <section className="py-12 lg:py-20">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
-                Другие услуги
+                Читайте также
               </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Популярные услуги
+                Другие инструкции
               </h2>
               <p className="text-muted-foreground">
-                Посмотрите другие услуги нашего сервисного центра
+                Полезные руководства по технике Apple
               </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {popularServices.map((item, index) => {
-                const fullService = servicesData.services.find(s => s.slug === item.slug);
-                const ItemIcon = fullService ? iconMap[fullService.icon] || Smartphone : Smartphone;
+              {otherInstructions.map((item, index) => {
+                const ItemIcon = iconMap[item.icon] || BookOpen;
                 
                 return (
                   <Link
                     key={index}
-                    to={`/services/${item.slug}`}
+                    to={`/instructions/${item.slug}`}
                     className="group bg-card rounded-2xl border border-border p-6 transition-all duration-300 hover:shadow-md hover:border-primary/30"
                   >
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                         <ItemIcon className="w-6 h-6 text-primary" />
                       </div>
-                      <div>
-                        <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-primary font-semibold">{item.priceFrom}</p>
-                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      <span>Подробнее</span>
+                    <h3 className="font-display font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      {item.shortDescription}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-primary">
+                      <span>Читать</span>
                       <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
@@ -259,23 +228,23 @@ const ServiceDetailContent = () => {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-12 lg:py-20">
+        <section className="py-12 lg:py-20 bg-secondary/30">
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
                 FAQ
               </span>
               <h2 className="heading-display text-3xl sm:text-4xl mb-4">
-                Вопросы и ответы
+                Частые вопросы
               </h2>
               <p className="text-muted-foreground">
-                Ответы на частые вопросы о {service.title.toLowerCase()}
+                Ответы на популярные вопросы по этой теме
               </p>
             </div>
 
             <div className="max-w-3xl mx-auto">
               <Accordion type="single" collapsible className="space-y-4">
-                {service.faq.map((item, index) => (
+                {instruction.faq.map((item, index) => (
                   <AccordionItem
                     key={index}
                     value={`item-${index}`}
@@ -302,12 +271,12 @@ const ServiceDetailContent = () => {
           <div className="container-custom">
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="heading-display text-3xl sm:text-4xl lg:text-5xl mb-6">
-                Готовы отремонтировать ваш{" "}
-                <span className="text-primary">{service.title.replace("Ремонт ", "")}</span>?
+                Не получается{" "}
+                <span className="text-primary">самостоятельно</span>?
               </h2>
               <p className="text-lg text-muted-foreground mb-8" style={{ lineHeight: "1.8" }}>
-                Оставьте заявку и мы свяжемся с вами в течение 15 минут для уточнения деталей. 
-                Бесплатная диагностика, гарантия до 1 года.
+                Если инструкция не помогла решить проблему — обратитесь к нашим специалистам. 
+                Бесплатная диагностика и гарантия на все работы.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button onClick={openModal} className="btn-primary inline-flex items-center gap-2 text-lg px-8 py-4">
@@ -319,9 +288,6 @@ const ServiceDetailContent = () => {
                   +7 (495) 123-45-67
                 </a>
               </div>
-              <p className="text-sm text-muted-foreground mt-6">
-                Цены {service.priceFrom} • Ремонт от 30 минут • Гарантия до 1 года
-              </p>
             </div>
           </div>
         </section>
@@ -333,12 +299,12 @@ const ServiceDetailContent = () => {
   );
 };
 
-const ServiceDetailPage = () => {
+const InstructionDetailPage = () => {
   return (
     <BookingModalProvider>
-      <ServiceDetailContent />
+      <InstructionDetailContent />
     </BookingModalProvider>
   );
 };
 
-export default ServiceDetailPage;
+export default InstructionDetailPage;
