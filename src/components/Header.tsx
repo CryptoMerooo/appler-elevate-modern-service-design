@@ -12,6 +12,7 @@ const Header = () => {
 
   const navLinks = [
     { href: isHomePage ? "#services" : "/services", label: "Услуги", isPage: !isHomePage },
+    { href: "/instructions", label: "Инструкции", isPage: true },
     { href: "#advantages", label: "Преимущества", isPage: false },
     { href: "#process", label: "Как мы работаем", isPage: false },
     { href: "#reviews", label: "Отзывы", isPage: false },
