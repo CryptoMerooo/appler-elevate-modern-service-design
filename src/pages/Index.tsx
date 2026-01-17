@@ -9,6 +9,7 @@ import FAQ from "@/components/FAQ";
 import Contacts from "@/components/Contacts";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
+import ContactWidget from "@/components/ContactWidget";
 import { BookingModalProvider } from "@/contexts/BookingModalContext";
 
 const Index = () => {
@@ -40,6 +41,7 @@ const Index = () => {
         </main>
         <Footer />
         <BookingModal />
+        <ContactWidget />
       </div>
     </BookingModalProvider>
   );
