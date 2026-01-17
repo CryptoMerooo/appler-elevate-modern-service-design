@@ -6,7 +6,7 @@ const SectionLibraryPage = () => {
       {/* Page Header */}
       <div className="bg-card border-b border-border">
         <div className="container-custom py-8">
-          <Breadcrumbs />
+          <Breadcrumbs items={[{ label: "Библиотека секций" }]} />
           <h1 className="heading-display text-4xl md:text-5xl lg:text-6xl text-foreground mt-6 mb-4">
             Библиотека секций
           </h1>
